@@ -32,6 +32,8 @@ import androidx.navigation.compose.rememberNavController
 import com.valentinerutto.mywallet.data.repository.BankingRepository
 import com.valentinerutto.mywallet.presentation.home.HomeScreen
 import com.valentinerutto.mywallet.presentation.login.LoginScreen
+import com.valentinerutto.mywallet.presentation.profile.ProfileScreen
+import com.valentinerutto.mywallet.presentation.statement.StatementScreen
 import com.valentinerutto.mywallet.ui.theme.MyWalletTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -100,29 +102,29 @@ fun BankingApp(repository: BankingRepository) {
                 }
             )
         }
-//
-//        composable(Screen.Profile.route) {
-//            ProfileScreen(
-//                onNavigateBack = { navController.navigateUp() },
-//                onLogout = {
-//                    navController.navigate(Screen.Login.route) {
-//                        popUpTo(Screen.Home.route) { inclusive = true }
-//                    }
-//                }
-//            )
-//        }
-//
+
+        composable(Screen.Profile.route) {
+            ProfileScreen(
+                onNavigateBack = { navController.navigateUp() },
+                onLogout = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
 //        composable(Screen.SendMoney.route) {
 //            SendMoneyScreen(
 //                onNavigateBack = { navController.navigateUp() }
 //            )
 //        }
 //
-//        composable(Screen.Statement.route) {
-//            StatementScreen(
-//                onNavigateBack = { navController.navigateUp() }
-//            )
-//        }
+        composable(Screen.Statement.route) {
+            StatementScreen(
+                onNavigateBack = { navController.navigateUp() }
+            )
+        }
 //
 //        composable(Screen.LocalTransactions.route) {
 //            LocalTransactionsScreen(
