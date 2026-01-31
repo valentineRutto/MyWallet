@@ -21,6 +21,8 @@ import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
 
+private lateinit var requiresNetworkType: NetworkType
+
 data class LocalTransactionsState(
     val transactions: List<Transaction> = emptyList(),
     val pendingCount: Int = 0
@@ -78,8 +80,8 @@ class LocalTransactionsViewModel @Inject constructor(
     }
 
     private fun enqueueWork(txId: String) {
-        val constraints = Constraints.Builder()
-            .setRequiresNetworkType(NetworkType.CONNECTED)
+
+        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<SendMoneyWorker>()

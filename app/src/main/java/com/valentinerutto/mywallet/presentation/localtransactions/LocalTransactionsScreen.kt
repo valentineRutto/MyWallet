@@ -94,7 +94,7 @@ fun LocalTransactionsScreen(
             Row(
                 modifier              = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment     = Alignment.Baseline
+              //  verticalAlignment     = Alignment.Baseline
             ) {
                 Text(
                     "Activity",
@@ -161,8 +161,8 @@ private fun TransactionItem(tx: Transaction, onRetry: () -> Unit) {
                 Box(
                     modifier = Modifier
                         .size(10.dp)
-                        .offset(y = 5.dp)
-                        .background(color = statusColor, shape = androidx.compose.ui.shape.CircleShape),
+                        .offset(y = 5.dp),
+                        //.background(color = statusColor, shape = androidx.compose.ui.shape.CircleShape),
                     contentAlignment = Alignment.Center
                 ) { }
 

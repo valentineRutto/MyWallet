@@ -18,7 +18,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.banking.app.presentation.sendmoney.SendMoneyViewModel
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -185,12 +184,11 @@ fun SendMoneyScreen(
                         unfocusedIndicatorColor = Color.Transparent
                     ),
                     singleLine = true,
-                    keyboardOptions =
-                        androidx.compose.ui.text.input.KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal
-                    )
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+
                 )
             }
+
             Spacer(Modifier.height(4.dp))
             Text(
                 "Available: ${formatMoney(state.balance)}",

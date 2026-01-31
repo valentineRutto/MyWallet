@@ -8,18 +8,18 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.banking.app.data.model.Transaction
-import com.banking.app.data.model.TransactionStatus
-import com.banking.app.data.repository.BankingRepository
-import com.banking.app.data.worker.KEY_TRANSACTION_ID
-import com.banking.app.data.worker.SendMoneyWorker
+import com.valentinerutto.mywallet.data.model.Transaction
+import com.valentinerutto.mywallet.data.model.TransactionStatus
+import com.valentinerutto.mywallet.data.repository.BankingRepository
+import com.valentinerutto.mywallet.worker.KEY_TRANSACTION_ID
+import com.valentinerutto.mywallet.worker.SendMoneyWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.Duration
 import java.util.UUID
-import java.util.concurrent.Duration
 import javax.inject.Inject
 
 data class SendMoneyState(
@@ -52,19 +52,19 @@ class SendMoneyViewModel @Inject constructor(
 
             // 1. Persist locally as QUEUED
             val transaction = Transaction(
-                id              = txId,
-                recipientName   = recipientName,
-                amount          = amount,
-                note            = note,
-                status          = TransactionStatus.QUEUED,
-                createdAt       = now,
+                id = txId,
+                recipientName = recipientName,
+                amount = amount,
+                note = note,
+                status = TransactionStatus.QUEUED,
+                createdAt = now,
                 workManagerRequestId = null   // filled after enqueue
             )
             repository.insertTransaction(transaction)
 
             // 2. Build & enqueue a WorkManager request (requires network)
             val constraints = Constraints.Builder()
-                .setRequiresNetworkType(NetworkType.CONNECTED)
+                .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
             val workRequest = OneTimeWorkRequestBuilder<SendMoneyWorker>()
