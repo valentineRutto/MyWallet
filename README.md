@@ -10,6 +10,8 @@ This project is a simple **Spring Boot REST API**.
 
 ### Base URL Configuration
 
+Change the url at ../mywallet/di/AppModule
+
 - **Physical device**  
   If you are running the app on a real device, update the base URL to your laptop’s local IP address:
 
