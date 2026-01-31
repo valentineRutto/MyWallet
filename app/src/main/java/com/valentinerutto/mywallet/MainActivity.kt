@@ -33,6 +33,7 @@ import com.valentinerutto.mywallet.data.repository.BankingRepository
 import com.valentinerutto.mywallet.presentation.home.HomeScreen
 import com.valentinerutto.mywallet.presentation.login.LoginScreen
 import com.valentinerutto.mywallet.presentation.profile.ProfileScreen
+import com.valentinerutto.mywallet.presentation.sendmoney.SendMoneyScreen
 import com.valentinerutto.mywallet.presentation.statement.StatementScreen
 import com.valentinerutto.mywallet.ui.theme.MyWalletTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -114,12 +115,12 @@ fun BankingApp(repository: BankingRepository) {
             )
         }
 
-//        composable(Screen.SendMoney.route) {
-//            SendMoneyScreen(
-//                onNavigateBack = { navController.navigateUp() }
-//            )
-//        }
-//
+        composable(Screen.SendMoney.route) {
+            SendMoneyScreen(
+                onNavigateBack = { navController.navigateUp() }
+            )
+        }
+
         composable(Screen.Statement.route) {
             StatementScreen(
                 onNavigateBack = { navController.navigateUp() }
