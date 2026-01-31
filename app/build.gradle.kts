@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
    // alias(libs.plugins.kotlin.android)
-   // alias(libs.plugins.hilt.android)
+   alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
 }
 
@@ -71,7 +71,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
-    // Room
+  // Room
     implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
 
