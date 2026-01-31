@@ -2,6 +2,8 @@ package com.valentinerutto.mywallet.presentation.localtransactions
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
@@ -89,7 +91,6 @@ fun LocalTransactionsScreen(
         ) {
             Spacer(Modifier.height(20.dp))
 
-            // ── Activity header ─────────────────────────────────────────
             Row(
                 modifier              = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -115,9 +116,16 @@ fun LocalTransactionsScreen(
                     Text("No local transactions yet", color = Color.Gray)
                 }
             } else {
-                state.transactions.forEach { tx ->
-                    TransactionItem(tx, onRetry = { viewModel.retry(tx) })
-                    Spacer(Modifier.height(16.dp))
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(
+                        items = state.transactions,
+                        key = { it.id }
+                    ) { tx ->
+                        TransactionItem(tx, onRetry = { viewModel.retry(tx) })
+                        Spacer(Modifier.height(16.dp))
+                    }
                 }
             }
         }
@@ -153,13 +161,12 @@ private fun TransactionItem(tx: Transaction, onRetry: () -> Unit) {
             verticalAlignment     = Alignment.Top
         ) {
             Row(verticalAlignment = Alignment.Top) {
-                // Status dot
-                Spacer(Modifier.width(0.dp)) // anchor
+                Spacer(Modifier.width(0.dp))
                 Box(
                     modifier = Modifier
                         .size(10.dp)
-                        .offset(y = 5.dp),
-                        //.background(color = statusColor, shape = androidx.compose.ui.shape.CircleShape),
+                        .offset(y = 5.dp)
+                        .background(color = statusColor, shape = MaterialTheme.shapes.small),
                     contentAlignment = Alignment.Center
                 ) { }
 
@@ -171,20 +178,18 @@ private fun TransactionItem(tx: Transaction, onRetry: () -> Unit) {
                 }
             }
 
-            // Right: amount + status badge
             Column(horizontalAlignment = Alignment.End) {
                 Text(amountStr, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                 Text(statusLabel, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = statusColor)
             }
         }
 
-        // Error banner (only for FAILED)
         if (tx.status == TransactionStatus.FAILED && tx.lastError != null) {
             Spacer(Modifier.height(8.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 22.dp)   // indent past the dot
+                    .padding(start = 22.dp)
             ) {
                 Box(
                     modifier = Modifier

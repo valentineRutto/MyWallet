@@ -18,15 +18,12 @@ interface TransactionDao {
     @Update
     suspend fun update(transaction: Transaction)
 
-    /** Live stream of ALL transactions, newest first. */
     @Query("SELECT * FROM transactions ORDER BY createdAt DESC")
     fun getAllTransactions(): Flow<List<Transaction>>
 
-    /** Single lookup by local UUID – used by the Worker after sync. */
     @Query("SELECT * FROM transactions WHERE id = :id LIMIT 1")
     suspend fun getById(id: String): Transaction?
 
-    /** All rows that still need to be pushed to the server. */
     @Query("SELECT * FROM transactions WHERE status IN (:statuses) ORDER BY createdAt ASC")
     suspend fun getByStatuses(statuses: List<TransactionStatus>): List<Transaction>
 
