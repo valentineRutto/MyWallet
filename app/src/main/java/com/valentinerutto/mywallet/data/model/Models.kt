@@ -5,7 +5,6 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 
-// Network request model
 data class LoginRequest(
     @SerializedName("customerId")
     val customerId: String,
@@ -31,7 +30,6 @@ data class CustomerAccount(
 
 )
 
-// Room entity for local storage
 @Entity(tableName = "user_profile")
 data class UserProfile(
     @PrimaryKey
@@ -43,7 +41,6 @@ val balance: Double?,
     val pin: String
 )
 
-// UI state model
 data class User(
     val customerId: String?,
     val fullName: String?,
@@ -52,9 +49,6 @@ data class User(
     val balance: Double?
 )
 
-// Convert extension functions
-
-// ─── Transaction sync status ────────────────────────────────────────────────
 enum class TransactionStatus {
     QUEUED,
     SYNCING,
@@ -62,23 +56,21 @@ enum class TransactionStatus {
     FAILED
 }
 
-// ─── Room entity for local transactions ─────────────────────────────────────
 @Entity(tableName = "transactions")
 data class Transaction(
     @PrimaryKey
-    val id: String,                          // UUID generated locally
-    val accountTo: String,               // free-text "To" field
+    val id: String,
+    val accountTo: String,
     val amount: Double,
     val accountFrom: String,
     val status: TransactionStatus,
-    val createdAt: Long,                     // epoch millis
+    val createdAt: Long,
     val lastAttemptAt: Long = 0L,
     val attemptCount: Int = 0,
     val lastError: String? = null,
-    val workManagerRequestId: String? = null // UUID of the enqueued WorkManager request
+    val workManagerRequestId: String? = null
 )
 
-// ─── Network models for send-money ──────────────────────────────────────────
 data class SendMoneyRequest(
     @SerializedName("customerId") val customerId: String,
     @SerializedName("accountFrom")    val accountFrom: String,

@@ -51,8 +51,8 @@ object AppModule {
     @Singleton
     fun provideBankingApiService(okHttpClient: OkHttpClient, gson: Gson): BankingApiService =
         Retrofit.Builder()
-           // .baseUrl("http://192.168.100.20:8092/")
-            .baseUrl("http://10.0.2.2:8092/")
+           // .baseUrl("http://192.168.100.20:8092/") this is the ip address of the laptop device
+            .baseUrl("http://10.0.2.2:8092/") //use this if running the app on the emulator
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

@@ -1,6 +1,5 @@
 package com.valentinerutto.mywallet.data.model
 
-import com.valentinerutto.mywallet.Screen
 
 object Mappers {
     fun LoginResponse.toUserProfile(pin: String) = customerId?.let {
