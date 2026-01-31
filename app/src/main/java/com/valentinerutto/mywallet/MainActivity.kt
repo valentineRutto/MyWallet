@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.valentinerutto.mywallet.data.repository.BankingRepository
 import com.valentinerutto.mywallet.presentation.home.HomeScreen
+import com.valentinerutto.mywallet.presentation.localtransactions.LocalTransactionsScreen
 import com.valentinerutto.mywallet.presentation.login.LoginScreen
 import com.valentinerutto.mywallet.presentation.profile.ProfileScreen
 import com.valentinerutto.mywallet.presentation.sendmoney.SendMoneyScreen
@@ -126,11 +127,11 @@ fun BankingApp(repository: BankingRepository) {
                 onNavigateBack = { navController.navigateUp() }
             )
         }
-//
-//        composable(Screen.LocalTransactions.route) {
-//            LocalTransactionsScreen(
-//                onNavigateBack = { navController.navigateUp() }
-//            )
-//        }
+
+        composable(Screen.LocalTransactions.route) {
+            LocalTransactionsScreen(
+                onNavigateBack = { navController.navigateUp() }
+            )
+        }
     }
 }

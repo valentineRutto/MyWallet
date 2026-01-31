@@ -13,7 +13,6 @@ data class LoginRequest(
     val pin: String
 )
 
-// Network response model
 data class LoginResponse(
     @SerialName("customerAccount")
     val customerAccount: CustomerAccount?,
@@ -54,23 +53,6 @@ data class User(
 )
 
 // Convert extension functions
-fun LoginResponse.toUserProfile(pin: String) = customerId?.let {
-    UserProfile(
-        customerId = it,
-        customerName = customerName,
-        email = email,
-        accountNo  = customerAccount?.accountNo,
-        balance = customerAccount?.balance,
-        pin = pin
-    )
-}
-
-fun UserProfile.toUser() = User(
-    customerId = customerId,
-    fullName = customerName,
-    email = email,
-    accountNumber = accountNo,
-    balance = balance)
 
 // ─── Transaction sync status ────────────────────────────────────────────────
 enum class TransactionStatus {
@@ -110,9 +92,16 @@ data class SendMoneyResponse(
     @SerializedName("message")       val message: String
 )
 
-// ─── Statement entry (dummy local data) ─────────────────────────────────────
+data class StatementRequest(
+    @SerializedName("customerId")
+    val customerId: String
+)
+
 data class StatementEntry(
-    val date: String,       // e.g. "Oct 31"
-    val description: String,
-    val amount: Double      // negative = debit
+
+ val transactionId:String?,
+    val accountNo:String?,
+    val debitOrCredit :String?,
+    val transactionType:String?,
+   val amount:Double?
 )

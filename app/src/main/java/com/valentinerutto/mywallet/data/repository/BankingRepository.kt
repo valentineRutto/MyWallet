@@ -4,19 +4,23 @@ import com.valentinerutto.mywallet.data.local.PreferencesManager
 import com.valentinerutto.mywallet.data.local.TransactionDao
 import com.valentinerutto.mywallet.data.local.UserProfileDao
 import com.valentinerutto.mywallet.data.model.LoginRequest
+import com.valentinerutto.mywallet.data.model.Mappers.toStatement
+import com.valentinerutto.mywallet.data.model.Mappers.toUser
+import com.valentinerutto.mywallet.data.model.Mappers.toUserProfile
 import com.valentinerutto.mywallet.data.model.SendMoneyRequest
 import com.valentinerutto.mywallet.data.model.SendMoneyResponse
 import com.valentinerutto.mywallet.data.model.StatementEntry
+import com.valentinerutto.mywallet.data.model.StatementRequest
 import com.valentinerutto.mywallet.data.model.Transaction
 import com.valentinerutto.mywallet.data.model.User
-import com.valentinerutto.mywallet.data.model.toUser
-import com.valentinerutto.mywallet.data.model.toUserProfile
 import com.valentinerutto.mywallet.data.remote.BankingApiService
 import com.valentinerutto.mywallet.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 class BankingRepository @Inject constructor(
@@ -54,6 +58,37 @@ class BankingRepository @Inject constructor(
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
         }
     }
+
+
+    fun getlast100Transactions(customerId: String): Flow<Resource<List<StatementEntry>>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = apiService.getLast100Transactions(StatementRequest(customerId))
+
+            if (response.isSuccessful && response.body() != null) {
+                val statements = response.body()!!.map { it.toStatement() }
+
+                preferencesManager.setLoggedIn(true, customerId)
+
+                emit(Resource.Success(statements))
+            } else {
+                val msg = when (response.code()) {
+                    401 -> "Invalid customer ID or PIN"
+                    404 -> "Customer not found"
+                    500 -> "Server error. Please try again later"
+                    else -> "Transaction fetch failed: ${response.message()}"
+                }
+                emit(Resource.Error(msg))
+            }
+        } catch (e: HttpException) {
+            emit(Resource.Error("Network error: ${e.message()}"))
+        } catch (e: IOException) {
+            emit(Resource.Error("Connection error. Check your internet"))
+        } catch (e: Exception) {
+            emit(Resource.Error("Unexpected error: ${e.localizedMessage}"))
+        }
+    }
+
 
     fun getUserProfile(): Flow<User?> =
         userProfileDao.getUserProfile().map { it?.toUser() }
@@ -115,14 +150,4 @@ class BankingRepository @Inject constructor(
         }
     }
 
-    // ── Statement (local seed) ──────────────────────────────────────────────
-    fun getStatementEntries(): List<StatementEntry> = listOf(
-        StatementEntry("Oct 31", "Payment Received",        2450.00),
-        StatementEntry("Oct 30", "Retail Merchant",        -1299.00),
-        StatementEntry("Oct 28", "Dining & Drinks",          -86.00),
-        StatementEntry("Oct 28", "Transport Services",       -24.30),
-        StatementEntry("Oct 25", "Coffee House",             -12.50),
-        StatementEntry("Oct 20", "Software Subscription",    -15.99),
-        StatementEntry("Oct 18", "Utility Billing",         -142.00)
-    )
 }
