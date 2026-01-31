@@ -30,6 +30,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.valentinerutto.mywallet.data.repository.BankingRepository
+import com.valentinerutto.mywallet.presentation.home.HomeScreen
 import com.valentinerutto.mywallet.presentation.login.LoginScreen
 import com.valentinerutto.mywallet.ui.theme.MyWalletTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -78,27 +79,27 @@ fun BankingApp(repository: BankingRepository) {
             )
         }
 
-//        composable(Screen.Home.route) {
-//            HomeScreen(
-//                onNavigateToProfile = {
-//                    navController.navigate(Screen.Profile.route)
-//                },
-//                onNavigateToSendMoney = {
-//                    navController.navigate(Screen.SendMoney.route)
-//                },
-//                onNavigateToStatement = {
-//                    navController.navigate(Screen.Statement.route)
-//                },
-//                onNavigateToLocalTransactions = {
-//                    navController.navigate(Screen.LocalTransactions.route)
-//                },
-//                onLogout = {
-//                    navController.navigate(Screen.Login.route) {
-//                        popUpTo(Screen.Home.route) { inclusive = true }
-//                    }
-//                }
-//            )
-//        }
+        composable(Screen.Home.route) {
+            HomeScreen(
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile.route)
+                },
+                onNavigateToSendMoney = {
+                    navController.navigate(Screen.SendMoney.route)
+                },
+                onNavigateToStatement = {
+                    navController.navigate(Screen.Statement.route)
+                },
+                onNavigateToLocalTransactions = {
+                    navController.navigate(Screen.LocalTransactions.route)
+                },
+                onLogout = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                }
+            )
+        }
 //
 //        composable(Screen.Profile.route) {
 //            ProfileScreen(
