@@ -98,7 +98,6 @@ data class StatementRequest(
 )
 
 data class StatementEntry(
-
  val transactionId:String?,
     val accountNo:String?,
     val debitOrCredit :String?,

@@ -26,6 +26,8 @@ fun HomeScreen(
 ) {
     val homeState by viewModel.homeState.collectAsState()
     val user = homeState.user
+    val showBalanceSheet by viewModel.showBalanceSheet.collectAsState()
+    val balanceState by viewModel.balanceState.collectAsState()
 
     Scaffold(
         bottomBar = {
@@ -57,7 +59,9 @@ fun HomeScreen(
             }
         }
     ) { paddingValues ->
+
         if (homeState.isLoading) {
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -121,7 +125,9 @@ fun HomeScreen(
                 MenuItem(
                     icon = Icons.Default.AccountBalance,
                     title = "Check Balance",
-                    onClick = { }
+                    onClick = {
+                        viewModel.checkBalance(user.customerId)
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -162,6 +168,13 @@ fun HomeScreen(
                     icon = Icons.Default.Logout,
                     title = "Logout",
                     onClick = { viewModel.logout(onLogout) }
+                )
+            }
+
+            if (showBalanceSheet) {
+                BalanceDialog(
+                    balanceState = balanceState,
+                    onDismiss = { viewModel.hideBalanceSheet() }
                 )
             }
         }

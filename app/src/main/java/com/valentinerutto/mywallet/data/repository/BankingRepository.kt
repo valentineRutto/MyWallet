@@ -1,8 +1,10 @@
 package com.valentinerutto.mywallet.data.repository
 
+import androidx.compose.runtime.State
 import com.valentinerutto.mywallet.data.local.PreferencesManager
 import com.valentinerutto.mywallet.data.local.TransactionDao
 import com.valentinerutto.mywallet.data.local.UserProfileDao
+import com.valentinerutto.mywallet.data.model.BalanceResponse
 import com.valentinerutto.mywallet.data.model.LoginRequest
 import com.valentinerutto.mywallet.data.model.Mappers.toStatement
 import com.valentinerutto.mywallet.data.model.Mappers.toUser
@@ -89,7 +91,29 @@ class BankingRepository @Inject constructor(
         }
     }
 
+    fun getBalance(customerId: String): Flow<Resource<BalanceResponse>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = apiService.getBalance(StatementRequest(customerId))
 
+            if (response.isSuccessful && response.body() != null) {
+                emit(Resource.Success(response.body()!!))
+            } else {
+                val msg = when (response.code()) {
+                    404 -> "Customer not found"
+                    500 -> "Server error. Please try again"
+                    else -> "Failed to fetch balance: ${response.message()}"
+                }
+                emit(Resource.Error(msg))
+            }
+        } catch (e: HttpException) {
+            emit(Resource.Error("Network error: ${e.message()}"))
+        } catch (e: IOException) {
+            emit(Resource.Error("Connection error. Check your internet"))
+        } catch (e: Exception) {
+            emit(Resource.Error("Unexpected error: ${e.localizedMessage}"))
+        }
+    }
     fun getUserProfile(): Flow<User?> =
         userProfileDao.getUserProfile().map { it?.toUser() }
 
