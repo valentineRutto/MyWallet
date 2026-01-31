@@ -169,7 +169,7 @@ private fun TransactionItem(tx: Transaction, onRetry: () -> Unit) {
                 Spacer(Modifier.width(12.dp))
 
                 Column {
-                    Text(tx.recipientName, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                    Text(tx.accountTo, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     Text(dateStr, fontSize = 13.sp, color = Color.Gray)
                 }
             }

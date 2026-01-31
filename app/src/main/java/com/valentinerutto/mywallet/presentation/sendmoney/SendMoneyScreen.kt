@@ -41,12 +41,13 @@ fun SendMoneyScreen(
         }
     }
 
-    var recipient by remember { mutableStateOf("") }
+    var accountTo by remember { mutableStateOf("") }
     var amountText by remember { mutableStateOf("") }
-    var note by remember { mutableStateOf("") }
+    var accountfrom by remember { mutableStateOf("$state.") }
+    var createdAt by remember { mutableStateOf("") }
 
     val amountValue = amountText.toDoubleOrNull() ?: 0.0
-    val canSend = recipient.isNotBlank() && amountValue > 0.0 && amountValue <= state.balance
+    val canSend = accountTo.isNotBlank() && amountValue > 0.0 && amountValue <= state.balance
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -75,7 +76,7 @@ fun SendMoneyScreen(
                     .background(Color.Black)
             ) {
                 Button(
-                    onClick = { viewModel.sendMoney(recipient, amountValue, note) },
+                    onClick = { viewModel.sendMoney(accountTo, amountValue) },
                     enabled = canSend,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -109,7 +110,6 @@ fun SendMoneyScreen(
 
             Spacer(Modifier.height(28.dp))
 
-            // ── TO ──────────────────────────────────────────────────────
             Text(
                 "TO",
                 fontSize = 12.sp,
@@ -118,11 +118,11 @@ fun SendMoneyScreen(
                 letterSpacing = 0.8.sp
             )
             TextField(
-                value = recipient,
-                onValueChange = { recipient = it },
+                value = accountTo,
+                onValueChange = { accountTo = it },
                 placeholder = {
                     Text(
-                        "Name or Account",
+                        "Account",
                         fontSize = 22.sp,
                         color = Color.LightGray,
                         fontWeight = FontWeight.Normal
@@ -145,7 +145,6 @@ fun SendMoneyScreen(
 
             Spacer(Modifier.height(28.dp))
 
-            // ── AMOUNT ──────────────────────────────────────────────────
             Text(
                 "AMOUNT",
                 fontSize = 12.sp,
@@ -159,7 +158,6 @@ fun SendMoneyScreen(
                 TextField(
                     value = amountText,
                     onValueChange = { raw ->
-                        // Allow only valid decimal input
                         val filtered = raw.replace(Regex("[^0-9.]"), "")
                         if (filtered.count { it == '.' } <= 1) amountText = filtered
                     },
@@ -194,42 +192,6 @@ fun SendMoneyScreen(
                 "Available: ${formatMoney(state.balance)}",
                 fontSize = 14.sp,
                 color = Color.Gray
-            )
-
-            Spacer(Modifier.height(32.dp))
-
-            // ── FOR ─────────────────────────────────────────────────────
-            Text(
-                "FOR",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.Gray,
-                letterSpacing = 0.8.sp
-            )
-            TextField(
-                value = note,
-                onValueChange = { note = it },
-                placeholder = {
-                    Text(
-                        "What is it for?",
-                        fontSize = 18.sp,
-                        color = Color.LightGray,
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-                textStyle = TextStyle(
-                    fontSize = 18.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal
-                ),
-                modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor   = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor   = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                singleLine = true
             )
         }
     }

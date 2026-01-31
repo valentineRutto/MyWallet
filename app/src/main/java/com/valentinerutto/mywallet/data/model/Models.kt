@@ -67,9 +67,9 @@ enum class TransactionStatus {
 data class Transaction(
     @PrimaryKey
     val id: String,                          // UUID generated locally
-    val recipientName: String,               // free-text "To" field
+    val accountTo: String,               // free-text "To" field
     val amount: Double,
-    val note: String,                        // "For" / memo field
+    val accountFrom: String,
     val status: TransactionStatus,
     val createdAt: Long,                     // epoch millis
     val lastAttemptAt: Long = 0L,
@@ -80,16 +80,15 @@ data class Transaction(
 
 // ─── Network models for send-money ──────────────────────────────────────────
 data class SendMoneyRequest(
-    @SerializedName("fromCustomerId") val fromCustomerId: String,
-    @SerializedName("toRecipient")    val toRecipient: String,
+    @SerializedName("customerId") val customerId: String,
+    @SerializedName("accountFrom")    val accountFrom: String,
     @SerializedName("amount")         val amount: Double,
-    @SerializedName("note")           val note: String
+    @SerializedName("accountTo")           val accountTo: String
 )
 
 data class SendMoneyResponse(
-    @SerializedName("transactionId") val transactionId: String,
-    @SerializedName("status")        val status: String,
-    @SerializedName("message")       val message: String
+    @SerializedName("response_status")        val status: String,
+    @SerializedName("response_message")       val message: String
 )
 
 data class StatementRequest(

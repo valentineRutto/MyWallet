@@ -30,7 +30,6 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE status IN (:statuses) ORDER BY createdAt ASC")
     suspend fun getByStatuses(statuses: List<TransactionStatus>): List<Transaction>
 
-    /** Wipe everything (logout). */
-    @Query("DELETE FROM transactions")
+   @Query("DELETE FROM transactions")
     suspend fun deleteAll()
 }

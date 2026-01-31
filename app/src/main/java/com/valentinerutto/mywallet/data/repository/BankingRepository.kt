@@ -143,6 +143,10 @@ class BankingRepository @Inject constructor(
     suspend fun getCurrentCustomerId(): String? =
         preferencesManager.customerId.first()
 
+  suspend fun getCurrentCustomerAcc(): String? =
+       userProfileDao.getUserProfile().first()?.accountNo
+
+
     suspend fun getCurrentBalance(): Double =
         userProfileDao.getUserProfile().first()?.balance ?: 0.0
 
@@ -151,12 +155,14 @@ class BankingRepository @Inject constructor(
         return try {
             val customerId = getCurrentCustomerId()
                 ?: return Resource.Error("Not logged in")
+
             val request = SendMoneyRequest(
-                fromCustomerId = customerId,
-                toRecipient = transaction.recipientName,
+                customerId = customerId,
+                accountTo = transaction.accountTo,
                 amount = transaction.amount,
-                note = transaction.note
+                accountFrom = transaction.accountFrom
             )
+
             val response = apiService.sendMoney(request)
             if (response.isSuccessful && response.body() != null) {
                 Resource.Success(response.body()!!)

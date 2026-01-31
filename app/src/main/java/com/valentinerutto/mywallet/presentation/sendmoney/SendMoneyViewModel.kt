@@ -45,20 +45,21 @@ class SendMoneyViewModel @Inject constructor(
         }
     }
 
-    fun sendMoney(recipientName: String, amount: Double, note: String) {
+    fun sendMoney(accountTo: String, amount: Double) {
         viewModelScope.launch {
             val txId = UUID.randomUUID().toString()
             val now  = System.currentTimeMillis()
+            val customerAccount = repository.getCurrentCustomerAcc()
 
             // 1. Persist locally as QUEUED
             val transaction = Transaction(
                 id = txId,
-                recipientName = recipientName,
+                accountTo = accountTo,
                 amount = amount,
-                note = note,
+                accountFrom = customerAccount.toString(),
                 status = TransactionStatus.QUEUED,
                 createdAt = now,
-                workManagerRequestId = null   // filled after enqueue
+                workManagerRequestId = null
             )
             repository.insertTransaction(transaction)
 
