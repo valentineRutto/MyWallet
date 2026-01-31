@@ -1,5 +1,6 @@
 package com.valentinerutto.mywallet.data.repository
 
+import android.widget.Toast
 import androidx.compose.runtime.State
 import com.valentinerutto.mywallet.data.local.PreferencesManager
 import com.valentinerutto.mywallet.data.local.TransactionDao
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import okhttp3.internal.platform.PlatformRegistry.applicationContext
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -162,6 +164,7 @@ class BankingRepository @Inject constructor(
                 amount = transaction.amount,
                 accountFrom = transaction.accountFrom
             )
+            Toast.makeText(applicationContext, "Transaction synced!${transaction.amount}", Toast.LENGTH_SHORT).show()
 
             val response = apiService.sendMoney(request)
             if (response.isSuccessful && response.body() != null) {

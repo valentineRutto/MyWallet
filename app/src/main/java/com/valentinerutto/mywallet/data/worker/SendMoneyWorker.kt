@@ -1,6 +1,8 @@
 package com.valentinerutto.mywallet.worker
 
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -25,15 +27,15 @@ class SendMoneyWorker @AssistedInject constructor(
                 buildOutputData("Transaction ID missing")
             )
 
-        // 1. Load the transaction; if gone or already synced, succeed silently.
         val transaction = repository.getTransactionById(txId)
             ?: return Result.success()
+
+        Toast.makeText(applicationContext, "Transaction synced!${transaction.amount}", Toast.LENGTH_SHORT).show()
 
         if (transaction.status == TransactionStatus.SYNCED) {
             return Result.success()
         }
 
-        // 2. Mark as SYNCING
         val now = System.currentTimeMillis()
         repository.updateTransaction(
             transaction.copy(
@@ -43,12 +45,10 @@ class SendMoneyWorker @AssistedInject constructor(
             )
         )
 
-        // 3. Hit the network
         val result = repository.executeSendMoney(transaction)
 
         return when (result) {
             is Resource.Success -> {
-                // 4a. Success → mark SYNCED
                 repository.updateTransaction(
                     transaction.copy(
                         status        = TransactionStatus.SYNCED,
@@ -57,10 +57,11 @@ class SendMoneyWorker @AssistedInject constructor(
                         lastError     = null
                     )
                 )
-                Result.success()
+
+                Result.success(buildOutputData("Transaction synced successfully"))
+
             }
             is Resource.Error -> {
-                // 4b. Failure → mark FAILED, store error
                 repository.updateTransaction(
                     transaction.copy(
                         status        = TransactionStatus.FAILED,
@@ -69,7 +70,6 @@ class SendMoneyWorker @AssistedInject constructor(
                         lastError     = result.message
                     )
                 )
-                // Return failure so WorkManager can apply its retry/backoff policy.
                 Result.failure(buildOutputData(result.message ?: "Unknown error"))
             }
             else -> Result.failure(buildOutputData("Unexpected state"))

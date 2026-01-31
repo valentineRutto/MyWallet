@@ -85,11 +85,12 @@ val customerId = userProfile.user?.customerId ?: ""
                     }
                     else -> {
                         LazyColumn {
-                            item { Text("Total: $${state.total}") }
                             items(state.entries) {entry->
                                 StatementRow(
                                     accountNo = entry.accountNo?:"", creditORdebit = entry.debitOrCredit?:"", amount = entry.amount?:0.0
                                 )
+
+                                Divider(color = Color.LightGray, thickness = 0.5.dp)
                                 Spacer(Modifier.height(20.dp))
                             }
                         }

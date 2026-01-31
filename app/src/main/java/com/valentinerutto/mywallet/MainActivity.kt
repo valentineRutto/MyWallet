@@ -107,12 +107,7 @@ fun BankingApp(repository: BankingRepository) {
 
         composable(Screen.Profile.route) {
             ProfileScreen(
-                onNavigateBack = { navController.navigateUp() },
-                onLogout = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Home.route) { inclusive = true }
-                    }
-                }
+                onNavigateBack = { navController.navigateUp() }
             )
         }
 

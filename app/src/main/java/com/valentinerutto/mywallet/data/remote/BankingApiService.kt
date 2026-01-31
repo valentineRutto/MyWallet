@@ -17,7 +17,7 @@ interface BankingApiService {
     @POST("springboot-rest-api/api/v1/customers/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
-    @POST("springboot-rest-api/api/v1/customers/send-money")
+    @POST("/springboot-rest-api/api/v1/transactions/send-money")
     suspend fun sendMoney(@Body request: SendMoneyRequest): Response<SendMoneyResponse>
 
     @POST("springboot-rest-api/api/v1/transactions/last-100-transactions")

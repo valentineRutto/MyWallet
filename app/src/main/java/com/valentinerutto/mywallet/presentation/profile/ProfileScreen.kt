@@ -24,7 +24,6 @@ import com.valentinerutto.mywallet.presentation.home.HomeViewModel
 @Composable
 fun ProfileScreen(
     onNavigateBack: () -> Unit,
-    onLogout: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val homeState by viewModel.homeState.collectAsState()

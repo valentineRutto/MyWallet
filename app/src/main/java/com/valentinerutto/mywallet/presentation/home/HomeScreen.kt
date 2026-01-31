@@ -38,23 +38,18 @@ fun HomeScreen(
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                     label = { Text("Home") }
                 )
+
                 NavigationBarItem(
                     selected = false,
-                    onClick = { },
-                    icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                    label = { Text("Search") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
+                    onClick = onNavigateToStatement,
                     icon = { Icon(Icons.Default.AccountBalance, contentDescription = "Transactions") },
                     label = { Text("Transactions") }
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { },
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-                    label = { Text("Settings") }
+                    onClick = onNavigateToProfile ,
+                    icon = { Icon(Icons.Default.AccountBox, contentDescription = "Settings") },
+                    label = { Text("Profile") }
                 )
             }
         }

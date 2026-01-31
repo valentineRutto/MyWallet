@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// Status colours – match the mockup
 private val COLOR_SYNCING  = Color(0xFF2196F3)   // blue
 private val COLOR_SYNCED   = Color(0xFF4CAF50)   // green
 private val COLOR_FAILED   = Color(0xFFF44336)   // red
@@ -94,7 +93,7 @@ fun LocalTransactionsScreen(
             Row(
                 modifier              = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-              //  verticalAlignment     = Alignment.Baseline
+                verticalAlignment     = Alignment.CenterVertically
             ) {
                 Text(
                     "Activity",
@@ -111,7 +110,6 @@ fun LocalTransactionsScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ── Transaction list ────────────────────────────────────────
             if (state.transactions.isEmpty()) {
                 Box(Modifier.fillMaxSize(), Alignment.Center) {
                     Text("No local transactions yet", color = Color.Gray)
@@ -154,7 +152,6 @@ private fun TransactionItem(tx: Transaction, onRetry: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment     = Alignment.Top
         ) {
-            // Left: dot + name + date
             Row(verticalAlignment = Alignment.Top) {
                 // Status dot
                 Spacer(Modifier.width(0.dp)) // anchor

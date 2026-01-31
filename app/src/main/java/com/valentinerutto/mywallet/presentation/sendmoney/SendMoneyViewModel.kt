@@ -1,5 +1,6 @@
 package com.valentinerutto.mywallet.presentation.sendmoney
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.BackoffPolicy
@@ -51,7 +52,6 @@ class SendMoneyViewModel @Inject constructor(
             val now  = System.currentTimeMillis()
             val customerAccount = repository.getCurrentCustomerAcc()
 
-            // 1. Persist locally as QUEUED
             val transaction = Transaction(
                 id = txId,
                 accountTo = accountTo,
@@ -63,7 +63,6 @@ class SendMoneyViewModel @Inject constructor(
             )
             repository.insertTransaction(transaction)
 
-            // 2. Build & enqueue a WorkManager request (requires network)
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -74,17 +73,22 @@ class SendMoneyViewModel @Inject constructor(
                 .setBackoffCriteria(
                     BackoffPolicy.EXPONENTIAL,
                     Duration.ofSeconds(10)
-                )
+                ).addTag("send_money_$txId")
+
                 .build()
 
             workManager.enqueue(workRequest)
 
-            // 3. Store the WorkManager request ID back into the row
+            workManager.getWorkInfoByIdLiveData(workRequest.id).observeForever { workInfo ->
+                workInfo?.let {
+                    Log.d("SendMoneyVM", "Work ${workRequest.id} state: ${it.state}")
+                    Log.d("SendMoneyVM", "Output: ${it.outputData}")
+                }
+            }
             repository.updateTransaction(
                 transaction.copy(workManagerRequestId = workRequest.id.toString())
             )
 
-            // 4. Signal UI that we're done – navigate back
             _state.value = _state.value.copy(queued = true)
         }
     }

@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
 
-private lateinit var requiresNetworkType: NetworkType
 
 data class LocalTransactionsState(
     val transactions: List<Transaction> = emptyList(),
@@ -55,7 +54,6 @@ class LocalTransactionsViewModel @Inject constructor(
     /** Re-enqueue a single FAILED transaction. */
     fun retry(transaction: Transaction) {
         viewModelScope.launch {
-            // Reset to QUEUED so the worker picks it up fresh
             repository.updateTransaction(
                 transaction.copy(status = TransactionStatus.QUEUED, lastError = null)
             )
@@ -63,8 +61,7 @@ class LocalTransactionsViewModel @Inject constructor(
         }
     }
 
-    /** Enqueue work for every QUEUED or FAILED transaction. */
-    fun syncAll() {
+  fun syncAll() {
         viewModelScope.launch {
             _state.value.transactions
                 .filter { it.status == TransactionStatus.QUEUED || it.status == TransactionStatus.FAILED }
@@ -87,7 +84,8 @@ class LocalTransactionsViewModel @Inject constructor(
         val workRequest = OneTimeWorkRequestBuilder<SendMoneyWorker>()
             .setConstraints(constraints)
             .setInputData(workDataOf(KEY_TRANSACTION_ID to txId))
-            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, Duration.ofSeconds(10))
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, Duration.ofSeconds(10)).
+        addTag("send_money_$txId")
             .build()
 
         workManager.enqueue(workRequest)
