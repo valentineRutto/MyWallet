@@ -33,10 +33,14 @@ class BankingRepository @Inject constructor(
             val response = apiService.login(LoginRequest(customerId, pin))
             if (response.isSuccessful && response.body() != null) {
                 val loginResponse = response.body()!!
+
                 val userProfile = loginResponse.toUserProfile(pin)
-                userProfileDao.insertUserProfile(userProfile)
+
+                userProfileDao.insertUserProfile(userProfile!!)
                 preferencesManager.setLoggedIn(true, customerId)
+
                 emit(Resource.Success(userProfile.toUser()))
+
             } else {
                 val msg = when (response.code()) {
                     401 -> "Invalid customer ID or PIN"

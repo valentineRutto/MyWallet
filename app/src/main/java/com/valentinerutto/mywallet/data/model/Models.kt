@@ -3,6 +3,7 @@ package com.valentinerutto.mywallet.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 
 // Network request model
 data class LoginRequest(
@@ -14,64 +15,62 @@ data class LoginRequest(
 
 // Network response model
 data class LoginResponse(
-    @SerializedName("customerId")
-    val customerId: String,
-    @SerializedName("fullName")
-    val fullName: String,
-    @SerializedName("email")
-    val email: String,
-    @SerializedName("accountNumber")
-    val accountNumber: String,
-    @SerializedName("balance")
-    val balance: Double,
-    @SerializedName("memberSince")
-    val memberSince: String,
-    @SerializedName("message")
-    val message: String? = null
+    @SerialName("customerAccount")
+    val customerAccount: CustomerAccount?,
+    @SerialName("customerId")
+    val customerId: String?,
+    @SerialName("customerName")
+    val customerName: String?,
+    @SerialName("email")
+    val email: String?
+)
+data class CustomerAccount(
+    @SerialName("accountNo")
+    val accountNo: String?,
+    @SerialName("balance")
+    val balance: Double?,
+
 )
 
 // Room entity for local storage
 @Entity(tableName = "user_profile")
 data class UserProfile(
     @PrimaryKey
-    val customerId: String,
-    val fullName: String,
-    val email: String,
-    val accountNumber: String,
-    val balance: Double,
-    val memberSince: String,
+val customerId: String,
+val customerName: String?,
+val email: String?,
+val accountNo: String?,
+val balance: Double?,
     val pin: String
 )
 
 // UI state model
 data class User(
-    val customerId: String,
-    val fullName: String,
-    val email: String,
-    val accountNumber: String,
-    val balance: Double,
-    val memberSince: String
+    val customerId: String?,
+    val fullName: String?,
+    val email: String?,
+    val accountNumber: String?,
+    val balance: Double?
 )
 
 // Convert extension functions
-fun LoginResponse.toUserProfile(pin: String) = UserProfile(
-    customerId = customerId,
-    fullName = fullName,
-    email = email,
-    accountNumber = accountNumber,
-    balance = balance,
-    memberSince = memberSince,
-    pin = pin
-)
+fun LoginResponse.toUserProfile(pin: String) = customerId?.let {
+    UserProfile(
+        customerId = it,
+        customerName = customerName,
+        email = email,
+        accountNo  = customerAccount?.accountNo,
+        balance = customerAccount?.balance,
+        pin = pin
+    )
+}
 
 fun UserProfile.toUser() = User(
     customerId = customerId,
-    fullName = fullName,
+    fullName = customerName,
     email = email,
-    accountNumber = accountNumber,
-    balance = balance,
-    memberSince = memberSince
-)
+    accountNumber = accountNo,
+    balance = balance)
 
 // ─── Transaction sync status ────────────────────────────────────────────────
 enum class TransactionStatus {

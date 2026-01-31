@@ -77,7 +77,7 @@ fun HomeScreen(
 
                 // Greeting
                 Text(
-                    text = "Hello, ${user.fullName.split(" ").firstOrNull() ?: "User"}",
+                    text = "Hello, ${user.fullName?.split(" ")?.firstOrNull() ?: "User"}",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onSurface
@@ -107,7 +107,7 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = formatCurrency(user.balance),
+                            text = formatCurrency(user.balance?:0.0),
                             fontSize = 36.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer

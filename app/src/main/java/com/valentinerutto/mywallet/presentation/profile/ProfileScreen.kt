@@ -42,11 +42,7 @@ fun ProfileScreen(
                         )
                     }
                 },
-                actions = {
-                    TextButton(onClick = { /* Edit profile */ }) {
-                        Text("Edit")
-                    }
-                },
+
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
@@ -63,7 +59,6 @@ fun ProfileScreen(
             ) {
                 Spacer(modifier = Modifier.height(32.dp))
                 
-                // Profile Picture Placeholder
                 Box(
                     modifier = Modifier
                         .size(100.dp)
@@ -71,36 +66,30 @@ fun ProfileScreen(
                         .background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = user.fullName.split(" ")
-                            .mapNotNull { it.firstOrNull()?.toString() }
-                            .take(2)
-                            .joinToString(""),
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    user.fullName?.split(" ")
+                        ?.mapNotNull { it.firstOrNull()?.toString() }
+                        ?.take(2)
+                        ?.joinToString("")?.let {
+                            Text(
+                                text = it,
+                                fontSize = 32.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                // Name
-                Text(
-                    text = user.fullName,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                // Verified Badge
-                Text(
-                    text = "Verified Account",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
-                
+                user.fullName?.let {
+                    Text(
+                        text = it,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(40.dp))
                 
                 // Profile Details
@@ -114,7 +103,6 @@ fun ProfileScreen(
                 ProfileDetailItem(
                     label = "CUSTOMER ID",
                     value = user.customerId,
-                    showCopyIcon = true
                 )
                 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -127,63 +115,10 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                 
                 ProfileDetailItem(
-                    label = "PRIMARY ACCOUNT",
-                    value = "•••• •••• ${user.accountNumber.takeLast(4)}",
-                    showVisibilityIcon = true
+                    label = "CUSTOMER ACCOUNT",
+                    value = " ${user.accountNumber}",
                 )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                ProfileDetailItem(
-                    label = "MEMBER SINCE",
-                    value = user.memberSince
-                )
-                
-                Spacer(modifier = Modifier.height(40.dp))
-                
-                // Settings Options
-                SettingsOption(
-                    title = "Security Settings",
-                    onClick = { }
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                SettingsOption(
-                    title = "Monthly Statements",
-                    onClick = { }
-                )
-                
-                Spacer(modifier = Modifier.height(32.dp))
-                
-                // Sign Out Button
-                TextButton(
-                    onClick = { viewModel.logout(onLogout) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Sign Out",
-                        color = Color.Red,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // App Version
-                Text(
-                    text = "App Version 2.4.12 (882)",
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                )
-                
-                Text(
-                    text = "Last login: Today, 10:42 AM",
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                )
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
@@ -193,9 +128,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileDetailItem(
     label: String,
-    value: String,
-    showCopyIcon: Boolean = false,
-    showVisibilityIcon: Boolean = false
+    value: String?
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -215,33 +148,14 @@ fun ProfileDetailItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = value,
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            
-            if (showCopyIcon) {
-                IconButton(onClick = { /* Copy to clipboard */ }) {
-                    Icon(
-                        imageVector = Icons.Default.ContentCopy,
-                        contentDescription = "Copy",
-                        modifier = Modifier.size(20.dp),
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                }
+            if (value != null) {
+                Text(
+                    text = value,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
-            
-            if (showVisibilityIcon) {
-                IconButton(onClick = { /* Toggle visibility */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Visibility,
-                        contentDescription = "Show",
-                        modifier = Modifier.size(20.dp),
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                }
-            }
+
         }
         
         Divider(
@@ -251,37 +165,4 @@ fun ProfileDetailItem(
     }
 }
 
-@Composable
-fun SettingsOption(
-    title: String,
-    onClick: () -> Unit
-) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f)
-            )
-            
-            Icon(
-                imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Navigate",
-                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-            )
-        }
-    }
-}
+
