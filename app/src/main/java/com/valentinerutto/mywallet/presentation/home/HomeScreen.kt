@@ -153,7 +153,7 @@ fun HomeScreen(
 
                 MenuItem(
                     icon = Icons.Default.LocationOn,
-                    title = "Local Activity",
+                    title = "Local Transactions",
                     onClick = onNavigateToLocalTransactions
                 )
 
