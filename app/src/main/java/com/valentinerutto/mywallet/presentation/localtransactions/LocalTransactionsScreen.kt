@@ -194,9 +194,11 @@ private fun TransactionItem(tx: Transaction, onRetry: () -> Unit) {
                 Box(
                     modifier = Modifier
                         .width(3.dp)
+
                         .fillMaxHeight()
                         .background(COLOR_FAILED)
                 )
+
                 Spacer(Modifier.width(10.dp))
                 Column {
                     Text(tx.lastError, fontSize = 13.sp, color = COLOR_FAILED)

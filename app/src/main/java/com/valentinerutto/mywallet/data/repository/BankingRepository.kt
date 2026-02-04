@@ -1,5 +1,6 @@
 package com.valentinerutto.mywallet.data.repository
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.State
 import com.valentinerutto.mywallet.data.local.PreferencesManager
@@ -164,7 +165,7 @@ class BankingRepository @Inject constructor(
                 amount = transaction.amount,
                 accountFrom = transaction.accountFrom
             )
-            Toast.makeText(applicationContext, "Transaction synced!${transaction.amount}", Toast.LENGTH_SHORT).show()
+
 
             val response = apiService.sendMoney(request)
             if (response.isSuccessful && response.body() != null) {
@@ -174,8 +175,10 @@ class BankingRepository @Inject constructor(
                     400 -> "Bad request – check amount or recipient"
                     401 -> "Session expired – please log in again"
                     402 -> "Insufficient funds on server"
-                    else -> "Send failed (${response.code()}): ${response.message()}"
+                    else -> "Send failed (${response.code()}): ${response.errorBody()?.string()}"
                 }
+                Log.d("SendMoneyWorker", "Transaction failed: ${response.errorBody().toString()} ")
+
                 Resource.Error(msg)
             }
         } catch (e: Exception) {

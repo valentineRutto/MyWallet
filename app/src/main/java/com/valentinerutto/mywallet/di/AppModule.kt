@@ -10,6 +10,7 @@ import com.valentinerutto.mywallet.data.local.PreferencesManager
 import com.valentinerutto.mywallet.data.local.TransactionDao
 import com.valentinerutto.mywallet.data.local.UserProfileDao
 import com.valentinerutto.mywallet.data.remote.BankingApiService
+import com.valentinerutto.mywallet.data.repository.BankingRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -83,4 +84,15 @@ object AppModule {
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
         WorkManager.getInstance(context)
+
+    @Provides
+    fun provideBankingRepository(
+        apiService: BankingApiService,
+        userProfileDao: UserProfileDao,
+        transactionDao: TransactionDao,
+        preferencesManager: PreferencesManager
+    ): BankingRepository =
+        BankingRepository(apiService, userProfileDao, transactionDao, preferencesManager)
+
 }
+

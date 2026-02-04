@@ -12,8 +12,8 @@ import androidx.work.workDataOf
 import com.valentinerutto.mywallet.data.model.Transaction
 import com.valentinerutto.mywallet.data.model.TransactionStatus
 import com.valentinerutto.mywallet.data.repository.BankingRepository
-import com.valentinerutto.mywallet.worker.KEY_TRANSACTION_ID
-import com.valentinerutto.mywallet.worker.SendMoneyWorker
+import com.valentinerutto.mywallet.data.worker.KEY_TRANSACTION_ID
+import com.valentinerutto.mywallet.data.worker.SendMoneyWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +26,6 @@ import javax.inject.Inject
 data class SendMoneyState(
     val balance: Double = 0.0,
     val isLoading: Boolean = true,
-    /** Set to true the instant the work request is enqueued; UI navigates back. */
     val queued: Boolean = false
 )
 
@@ -48,6 +47,7 @@ class SendMoneyViewModel @Inject constructor(
 
     fun sendMoney(accountTo: String, amount: Double) {
         viewModelScope.launch {
+
             val txId = UUID.randomUUID().toString()
             val now  = System.currentTimeMillis()
             val customerAccount = repository.getCurrentCustomerAcc()
@@ -61,6 +61,7 @@ class SendMoneyViewModel @Inject constructor(
                 createdAt = now,
                 workManagerRequestId = null
             )
+
             repository.insertTransaction(transaction)
 
             val constraints = Constraints.Builder()
@@ -74,7 +75,6 @@ class SendMoneyViewModel @Inject constructor(
                     BackoffPolicy.EXPONENTIAL,
                     Duration.ofSeconds(10)
                 ).addTag("send_money_$txId")
-
                 .build()
 
             workManager.enqueue(workRequest)
@@ -85,6 +85,7 @@ class SendMoneyViewModel @Inject constructor(
                     Log.d("SendMoneyVM", "Output: ${it.outputData}")
                 }
             }
+
             repository.updateTransaction(
                 transaction.copy(workManagerRequestId = workRequest.id.toString())
             )

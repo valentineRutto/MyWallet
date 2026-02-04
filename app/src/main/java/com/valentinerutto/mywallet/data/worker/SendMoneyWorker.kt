@@ -1,10 +1,10 @@
-package com.valentinerutto.mywallet.worker
+package com.valentinerutto.mywallet.data.worker
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.valentinerutto.mywallet.data.model.TransactionStatus
 import com.valentinerutto.mywallet.data.repository.BankingRepository
@@ -16,8 +16,8 @@ const val KEY_TRANSACTION_ID = "transaction_id"
 
 @HiltWorker
 class SendMoneyWorker @AssistedInject constructor(
-    @Assisted context: Context,
-    @Assisted workerParams: WorkerParameters,
+    @Assisted private val context: Context,
+    @Assisted private val workerParams: WorkerParameters,
     private val repository: BankingRepository
 ) : CoroutineWorker(context, workerParams) {
 
@@ -29,8 +29,7 @@ class SendMoneyWorker @AssistedInject constructor(
 
         val transaction = repository.getTransactionById(txId)
             ?: return Result.success()
-
-        Toast.makeText(applicationContext, "Transaction synced!${transaction.amount}", Toast.LENGTH_SHORT).show()
+        Log.d("SendMoneyWorker", "Transaction synced: ${transaction.amount}")
 
         if (transaction.status == TransactionStatus.SYNCED) {
             return Result.success()
@@ -62,6 +61,7 @@ class SendMoneyWorker @AssistedInject constructor(
 
             }
             is Resource.Error -> {
+
                 repository.updateTransaction(
                     transaction.copy(
                         status        = TransactionStatus.FAILED,
@@ -70,14 +70,19 @@ class SendMoneyWorker @AssistedInject constructor(
                         lastError     = result.message
                     )
                 )
-                Result.failure(buildOutputData(result.message ?: "Unknown error"))
+
+                Log.d("SendMoneyWorker", "Transaction failed: ${result.message} ,  ${result.data?.message},  ${result.data?.status}")
+
+                Result.failure(buildOutputData(
+                    (result.message + result.data?.message) ?: "Unknown error"
+                ))
             }
             else -> Result.failure(buildOutputData("Unexpected state"))
         }
     }
 
     private fun buildOutputData(error: String) =
-        androidx.work.Data.Builder()
+        Data.Builder()
             .putString("error", error)
             .build()
 }

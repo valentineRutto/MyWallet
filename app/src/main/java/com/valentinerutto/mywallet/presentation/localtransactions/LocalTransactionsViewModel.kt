@@ -11,8 +11,8 @@ import androidx.work.workDataOf
 import com.valentinerutto.mywallet.data.model.Transaction
 import com.valentinerutto.mywallet.data.model.TransactionStatus
 import com.valentinerutto.mywallet.data.repository.BankingRepository
-import com.valentinerutto.mywallet.worker.KEY_TRANSACTION_ID
-import com.valentinerutto.mywallet.worker.SendMoneyWorker
+import com.valentinerutto.mywallet.data.worker.KEY_TRANSACTION_ID
+import com.valentinerutto.mywallet.data.worker.SendMoneyWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
